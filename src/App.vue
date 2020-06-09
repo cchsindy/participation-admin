@@ -1,73 +1,68 @@
 <template>
   <div id="app">
     <h1>Athletic Participation Admin</h1>
-    *view submissions by year *search for student *upload IHSAA pages and
-    medical forms *manage coaches *associate with BB id *load team rosters from
-    VNN
     <Submission v-for="item in submissions" :key="item.id" :item="item" />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import Submission from '@/components/Submission'
+import Vue from "vue";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import Submission from "@/components/Submission";
 
 const app = firebase.initializeApp({
-  apiKey: 'AIzaSyCg_FVHdzP3kvRAyrnpE2bJUsQfMRUgFW4',
-  authDomain: 'my-covenant.firebaseapp.com',
-  databaseURL: 'https://my-covenant.firebaseio.com',
-  projectId: 'my-covenant',
-  storageBucket: 'my-covenant.appspot.com',
-  messagingSenderId: '945207168321',
-  appId: '1:945207168321:web:e42d0845df84c8c24e65c0',
-})
-const store = app.firestore()
+  apiKey: "AIzaSyCg_FVHdzP3kvRAyrnpE2bJUsQfMRUgFW4",
+  authDomain: "my-covenant.firebaseapp.com",
+  databaseURL: "https://my-covenant.firebaseio.com",
+  projectId: "my-covenant",
+  storageBucket: "my-covenant.appspot.com",
+  messagingSenderId: "945207168321",
+  appId: "1:945207168321:web:e42d0845df84c8c24e65c0"
+});
+const store = app.firestore();
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Submission,
+    Submission
   },
   created() {
-    store.collection('athletic_participation').onSnapshot((snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          this.submissions.push({ id: change.doc.id, ...change.doc.data() })
+    store.collection("athletic_participation").onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          this.submissions.push({ id: change.doc.id, ...change.doc.data() });
         }
-        if (change.type === 'modified') {
-          const index = this.submissions.findIndex((i) => {
-            return i.id === change.doc.id
-          })
+        if (change.type === "modified") {
+          const index = this.submissions.findIndex(i => {
+            return i.id === change.doc.id;
+          });
           Vue.set(this.submissions, index, {
             id: change.doc.id,
-            ...change.doc.data(),
-          })
+            ...change.doc.data()
+          });
         }
-        if (change.type === 'removed') {
+        if (change.type === "removed") {
           this.submissions = this.submissions.filter(
-            (i) => i.id !== change.doc.id
-          )
+            i => i.id !== change.doc.id
+          );
         }
-      })
-    })
+      });
+    });
   },
   data: () => {
     return {
-      submissions: [],
-    }
-  },
-}
+      submissions: []
+    };
+  }
+};
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap");
 
 html,
 body {
-  font-family: 'Work Sans';
-  margin: 0;
-  padding: 0;
+  font-family: "Work Sans";
 }
 </style>
