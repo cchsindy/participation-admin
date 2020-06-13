@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <h1>Athletic Participation Admin</h1>
-    <Submission v-for="item in submissions" :key="item.id" :item="item" @remove="removeItem" />
+    <Submission
+      v-for="item in submissions"
+      :key="item.id"
+      :item="item"
+      @eventlink="eventLink"
+      @remove="removeItem"
+    />
   </div>
 </template>
 
@@ -59,6 +65,14 @@ export default {
     };
   },
   methods: {
+    eventLink(id) {
+      store.doc(`athletic_participation/${id}`).set(
+        {
+          eventlink: true
+        },
+        { merge: true }
+      );
+    },
     removeItem(id) {
       store.doc(`athletic_participation/${id}`).delete();
     }

@@ -1,5 +1,11 @@
 <template>
   <div class="parent">
+    <div v-if="!item.eventlink" class="child">
+      <button @click="eventLink">
+        EventLink
+        <br />Updated
+      </button>
+    </div>
     <div class="child">
       {{ item.student }}
       <br />
@@ -153,16 +159,24 @@ export default {
         page5 = await loadImage(this.item.p5);
       }
       let pageContent = "<html><head><title>IHSAA Form</title></head><body>";
-      if (page1 !== "") pageContent += `<img src="${page1}" />`;
-      if (page2 !== "") pageContent += `<img src="${page2}" />`;
-      if (page3 !== "") pageContent += `<img src="${page3}" />`;
-      if (page4 !== "") pageContent += `<img src="${page4}" />`;
-      if (page5 !== "") pageContent += `<img src="${page5}" />`;
+      if (page1 !== "")
+        pageContent += `<img src="${page1}" style="width: 100%;" />`;
+      if (page2 !== "")
+        pageContent += `<img src="${page2}" style="width: 100%;" />`;
+      if (page3 !== "")
+        pageContent += `<img src="${page3}" style="width: 100%;" />`;
+      if (page4 !== "")
+        pageContent += `<img src="${page4}" style="width: 100%;" />`;
+      if (page5 !== "")
+        pageContent += `<img src="${page5}" style="width: 100%;" />`;
       pageContent += "</body></html>";
       let tab = window.open("");
       tab.document.open();
       tab.document.write(pageContent);
       tab.document.close();
+    },
+    eventLink() {
+      this.$emit("eventlink", this.item.id);
     },
     remove() {
       this.$emit("remove", this.item.id);
