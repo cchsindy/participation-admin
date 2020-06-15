@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "my-covenant"
+  },
+  "targets": {
+    "my-covenant": {
+      "hosting": {
+        "admin": [
+          "athletic-forms-admin"
+        ]
+      }
+    }
+  }
+}
