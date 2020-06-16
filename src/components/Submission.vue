@@ -23,7 +23,7 @@
     </div>
     <div :class="handbook">Handbook</div>
     <div :class="concussion">Concussion/SCA</div>
-    <div :class="transportation">Transporation</div>
+    <div :class="transportation">Transportation</div>
     <div v-if="!item.finished" class="child">{{ item.started.toDate() | date }}</div>
     <div v-else class="child">{{ item.finished.toDate() | date }}</div>
     <div class="child">
