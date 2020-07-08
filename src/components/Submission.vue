@@ -20,6 +20,26 @@
       <div v-if="ihsaaType.length > 5">
         <button @click="loadIHSAA">View</button>
       </div>
+      <div>
+        <button @click="toggleUpload">{{uploadAction}} Upload</button>
+      </div>
+      <div v-if="showUpload">
+        <input ref="page1" type="file" />
+        <button @click="upload(1)">{{page1Action}} Page 1</button>
+        <br />
+        <input ref="page2" type="file" />
+        <button @click="upload(2)">{{page2Action}} Page 2</button>
+        <br />
+        <input ref="page3" type="file" />
+        <button @click="upload(3)">{{page3Action}} Page 3</button>
+        <br />
+        <input ref="page4" type="file" />
+        <button @click="upload(4)">{{page4Action}} Page 4</button>
+        <br />
+        <input ref="page5" type="file" />
+        <button @click="upload(5)">{{page5Action}} Page 5</button>
+        <p class="red" v-if="error">{{ error }}</p>
+      </div>
     </div>
     <div :class="handbook">Handbook</div>
     <div :class="concussion">Concussion/SCA</div>
@@ -28,6 +48,11 @@
     <div v-else class="child">{{ item.finished.toDate() | date }}</div>
     <div class="child">
       <button @click="remove">Remove</button>
+      <br />
+      <span class="warning">
+        * Be careful, this
+        <br />cannot be undone!
+      </span>
     </div>
   </div>
 </template>
@@ -127,9 +152,33 @@ export default {
         type = "IHSAA<br>Partial";
       return type;
     },
+    page1Action() {
+      return this.item.p1 ? "Replace" : "Add";
+    },
+    page2Action() {
+      return this.item.p2 ? "Replace" : "Add";
+    },
+    page3Action() {
+      return this.item.p3 ? "Replace" : "Add";
+    },
+    page4Action() {
+      return this.item.p4 ? "Replace" : "Add";
+    },
+    page5Action() {
+      return this.item.p5 ? "Replace" : "Add";
+    },
     transportation() {
       return this.item.transportation ? "child green" : "child red";
+    },
+    uploadAction() {
+      return this.showUpload ? "Hide" : "Show";
     }
+  },
+  data: () => {
+    return {
+      error: "",
+      showUpload: false
+    };
   },
   filters: {
     date(value) {
@@ -180,6 +229,83 @@ export default {
     },
     remove() {
       this.$emit("remove", this.item.id);
+    },
+    toggleUpload() {
+      this.showUpload = !this.showUpload;
+    },
+    upload(page) {
+      this.error = "";
+      let file;
+      switch (page) {
+        case 1:
+          file = this.$refs.page1.files[0];
+          break;
+        case 2:
+          file = this.$refs.page2.files[0];
+          break;
+        case 3:
+          file = this.$refs.page3.files[0];
+          break;
+        case 4:
+          file = this.$refs.page4.files[0];
+          break;
+        case 5:
+          file = this.$refs.page5.files[0];
+          break;
+      }
+      if (file.size < 4000000 && file.type === "image/jpeg") {
+        const blob = file.slice(0, file.size - 1);
+        const params = {
+          Bucket: "covenant",
+          Key: `ihsaa/${this.item.id}_page${page}.jpg`,
+          ContentType: file.type,
+          Body: blob,
+          ACL: "private"
+        };
+        s3.upload(params, err => {
+          if (!err) {
+            switch (page) {
+              case 1:
+                this.$emit("ihsaa", {
+                  id: this.item.id,
+                  num: "p1",
+                  val: params.Key
+                });
+                break;
+              case 2:
+                this.$emit("ihsaa", {
+                  id: this.item.id,
+                  num: "p2",
+                  val: params.Key
+                });
+                break;
+              case 3:
+                this.$emit("ihsaa", {
+                  id: this.item.id,
+                  num: "p3",
+                  val: params.Key
+                });
+                break;
+              case 4:
+                this.$emit("ihsaa", {
+                  id: this.item.id,
+                  num: "p4",
+                  val: params.Key
+                });
+                break;
+              case 5:
+                this.$emit("ihsaa", {
+                  id: this.item.id,
+                  num: "p5",
+                  val: params.Key
+                });
+                break;
+            }
+          }
+        });
+      } else {
+        this.error = "Image file is either too large or not of supported type.";
+      }
     }
   },
   props: {
@@ -206,5 +332,10 @@ export default {
 }
 .red {
   color: red;
+}
+.warning {
+  color: red;
+  font-size: small;
+  font-style: italic;
 }
 </style>

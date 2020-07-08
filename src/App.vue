@@ -9,6 +9,7 @@
         :key="item.id"
         :item="item"
         @eventlink="eventLink"
+        @ihsaa="updatePage"
         @remove="removeItem"
       />
     </div>
@@ -114,6 +115,14 @@ export default {
     },
     removeItem(id) {
       store.doc(`athletic_participation/${id}`).delete();
+    },
+    updatePage(page) {
+      store
+        .doc(`athletic_participation/${page.id}`)
+        .set({
+          [page.num]: page.val
+        },
+        { merge: true })
     }
   }
 };
