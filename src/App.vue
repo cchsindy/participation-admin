@@ -95,9 +95,6 @@ export default {
   },
   computed: {
     filteredSubmissions() {
-      // return this.showEventLink
-      //   ? this.submissions
-      //   : this.submissions.filter(s => !s.eventlink);
       let filtered = [];
       if (this.filter.length > 2) {
         filtered = this.submissions.filter(s =>
