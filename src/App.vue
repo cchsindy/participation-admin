@@ -98,7 +98,7 @@ export default {
       let filtered = [];
       if (this.filter.length > 2) {
         filtered = this.submissions.filter(s =>
-          s.student.includes(this.filter)
+          s.student.toLowerCase().includes(this.filter.toLowerCase())
         );
       } else {
         filtered = this.submissions;
