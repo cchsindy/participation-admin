@@ -4,6 +4,13 @@
     <div v-if="user">
       Show Updated EventLink Submissions
       <input type="checkbox" v-model="showEventLink" />
+      &nbsp;&nbsp;
+      Total: {{ filteredSubmissions.length }}
+      &nbsp;&nbsp;
+      Filter by Student:
+      <input
+        v-model="filter"
+      />
       <Submission
         v-for="item in filteredSubmissions"
         :key="item.id"
@@ -88,14 +95,27 @@ export default {
   },
   computed: {
     filteredSubmissions() {
-      return this.showEventLink
-        ? this.submissions
-        : this.submissions.filter(s => !s.eventlink);
+      // return this.showEventLink
+      //   ? this.submissions
+      //   : this.submissions.filter(s => !s.eventlink);
+      let filtered = [];
+      if (this.filter.length > 2) {
+        filtered = this.submissions.filter(s =>
+          s.student.includes(this.filter)
+        );
+      } else {
+        filtered = this.submissions;
+      }
+      if (!this.showEventLink) {
+        filtered = filtered.filter(f => !f.eventlink);
+      }
+      return filtered;
     }
   },
   data: () => {
     return {
       displayName: "",
+      filter: "",
       showEventLink: false,
       submissions: [],
       user: null
@@ -117,12 +137,12 @@ export default {
       store.doc(`athletic_participation/${id}`).delete();
     },
     updatePage(page) {
-      store
-        .doc(`athletic_participation/${page.id}`)
-        .set({
+      store.doc(`athletic_participation/${page.id}`).set(
+        {
           [page.num]: page.val
         },
-        { merge: true })
+        { merge: true }
+      );
     }
   }
 };
