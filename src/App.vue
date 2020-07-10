@@ -2,7 +2,7 @@
   <div id="app">
     <h1>Athletic Participation Admin</h1>
     <div v-if="user">
-      Show Updated EventLink Submissions
+      <Orphans :subids="subids" />Show Updated EventLink Submissions
       <input type="checkbox" v-model="showEventLink" />
       &nbsp;&nbsp;
       Total: {{ filteredSubmissions.length }}
@@ -11,6 +11,8 @@
       <input
         v-model="filter"
       />
+      <br />
+      <br />
       <Submission
         v-for="item in filteredSubmissions"
         :key="item.id"
@@ -32,6 +34,7 @@ import Vue from "vue";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import Orphans from "@/components/Orphans";
 import Submission from "@/components/Submission";
 
 const app = firebase.initializeApp({
@@ -49,6 +52,7 @@ const store = app.firestore();
 export default {
   name: "App",
   components: {
+    Orphans,
     Submission
   },
   created() {
@@ -107,6 +111,13 @@ export default {
         filtered = filtered.filter(f => !f.eventlink);
       }
       return filtered;
+    },
+    subids() {
+      const ids = [];
+      for (const sub of this.submissions) {
+        ids.push(sub.id);
+      }
+      return ids;
     }
   },
   data: () => {
